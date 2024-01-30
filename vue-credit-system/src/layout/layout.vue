@@ -26,6 +26,17 @@
                         <router-link to='/application-manage/index'>申请列表</router-link>
                     </el-menu-item>
                 </el-submenu>
+                <el-submenu index="4">
+                    <template slot="title">
+                        <span>贷款审批</span>
+                    </template>
+                    <el-menu-item index="4-1">
+                        <router-link to='/loan-approve/first'>初审</router-link>
+                    </el-menu-item>
+                    <el-menu-item index="4-2">
+                        <router-link to='/loan-approve/end'>终审</router-link>
+                    </el-menu-item>
+                </el-submenu>
             </el-menu>
 
         </el-aside>
@@ -137,5 +148,8 @@ a:active {
 
 .el-menu-vertical-demo {
     border: none;
+}
+.router-link-active{
+    color:rgb(255,208,75) !important;
 }
 </style>

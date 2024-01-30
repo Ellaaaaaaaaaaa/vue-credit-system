@@ -67,6 +67,33 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/loan-approve",
+    component: () => import("@/layout/layout.vue"),
+    redirect: "/loan-approve/first",
+    meta: {
+      roles: ["approve"],
+      title: "贷款审批",
+    },
+    children: [
+      {
+        path: "/loan-approve/first",
+        component: () => import("@/views/loan-approve/first.vue"),
+        name: "first",
+        meta: {
+          title: "初审",
+        },
+      },
+      {
+        path: "/loan-approve/end",
+        component: () => import("@/views/loan-approve/end.vue"),
+        name: "end",
+        meta: {
+          title: "终审",
+        },
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({

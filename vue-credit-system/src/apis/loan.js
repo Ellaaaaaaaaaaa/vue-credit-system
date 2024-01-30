@@ -41,3 +41,43 @@ export const submitApprove = (id) => {
         }
     })
 }
+// 审批-初审-查询接口
+export const queryList = (params) => {
+    return request({
+        url: '/approve/first/list',
+        method: 'get',
+        params
+    })
+}
+// 初审通过/拒绝接口
+export const approveFirst = (id,flag) => {
+    //调用时传入flag，改变调用的是通过或者是失败的接口
+    return request({
+        url: '/approve/first/'+flag,
+        method: 'post',
+        data: {
+            loanId:  id,
+            appId: id
+        }
+    })
+}
+// 审批-终审-查询接口
+export const queryEndList = (params) => {
+    return request({
+        url: '/approve/end/list',
+        method: 'get',
+        params
+    })
+}
+
+// 审批 - 终审-通过/拒绝接口
+export const approveEnd = (id, flag) => {
+    return request({
+        url: '/approve/end/' + flag,
+        method: 'POST',
+        data: {
+            appId: id,
+            loanId: id
+        }
+    })
+}

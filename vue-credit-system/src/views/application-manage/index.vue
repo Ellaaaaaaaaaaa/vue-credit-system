@@ -66,7 +66,7 @@
                         </el-col>
                         <el-col :xl=20 :lg=20 :md=12 :sm=24 :xs=24>
                             <el-form-item label="手机号" prop="mobile_phone">
-                                <el-input type='input' v-model="updateForm.mobile_phone" style="width:125px"></el-input>
+                                <el-input type='input' v-model="updateForm.mobile_phone" ></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
