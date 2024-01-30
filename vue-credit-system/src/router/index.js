@@ -94,6 +94,24 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/contract-manage",
+    redirect: "/contract-manage/index",
+    meta: {
+      title: "合同管理",
+    },
+    component: () => import("@/layout/layout.vue"),
+    children: [
+      {
+        path: "/contract-manage/index",
+        name: "contract-manage",
+        meta: {
+          title: "合同列表",
+        },
+        component: () => import("@/views/contract-manage/index.vue"),
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({

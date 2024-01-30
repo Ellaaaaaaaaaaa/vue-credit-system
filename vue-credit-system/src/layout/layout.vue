@@ -37,6 +37,14 @@
                         <router-link to='/loan-approve/end'>终审</router-link>
                     </el-menu-item>
                 </el-submenu>
+                <el-submenu index="5">
+                    <template slot="title">
+                        <span>合同管理</span>
+                    </template>
+                    <el-menu-item index="5-1">
+                        <router-link to='/contract-manage/index'>合同列表</router-link>
+                    </el-menu-item>
+                </el-submenu>
             </el-menu>
 
         </el-aside>
@@ -149,7 +157,8 @@ a:active {
 .el-menu-vertical-demo {
     border: none;
 }
-.router-link-active{
-    color:rgb(255,208,75) !important;
+
+.router-link-active {
+    color: rgb(255, 208, 75) !important;
 }
 </style>

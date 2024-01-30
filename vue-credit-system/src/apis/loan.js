@@ -81,3 +81,33 @@ export const approveEnd = (id, flag) => {
         }
     })
 }
+// 合同管理-合同列表接口
+export const contractList = (params) => {
+    return request({
+        url: '/contract/list',
+        method: 'get',
+        params
+    })
+}
+
+// 合同管理- 生成合同接口
+export const generateContract = (id) => {
+    return request({
+        url: '/contract/createFile',
+        method: 'post',
+        data: {
+            id
+        }
+    })
+}
+
+// 合同管理- 下载合同接口
+export const downloadContract = (id) => {
+    return request({
+        url: '/contract/download',
+        method: 'get',
+        params: {
+            id
+        }
+    })
+}
