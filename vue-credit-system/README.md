@@ -1,19 +1,3 @@
 # vue-credit-system
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+本项目主要是尝试一下vue的前后端分离操作，重点在于使用vuex来同步生成动态菜单以及使用axios调用后端接口获取数据在前端渲染
