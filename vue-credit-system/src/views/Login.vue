@@ -70,7 +70,7 @@ export default {
                 //保存token
                 if (res?.data?.data?.token) {
                     localStorage.setItem('token', res?.data?.data?.token)
-
+                    this.$store.commit("NAMEUPDATE",this.ruleForm.username)
                     // 跳转到首页
                     this.$router.replace("/home");
                 }

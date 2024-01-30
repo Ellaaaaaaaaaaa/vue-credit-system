@@ -1,52 +1,11 @@
 <template>
     <el-container>
         <el-aside width="240px">
-            <el-menu class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-                <!--//没有二级导航的 -->
-                <el-menu-item index="1">
-                    <span slot="title">
-                        <router-link to="/home">首页</router-link>
-                    </span>
-                </el-menu-item>
-
-                <!--	//有二级导航的 -->
-                <el-submenu index="2">
-                    <template slot="title">
-                        <span>贷款管理</span>
-                    </template>
-                    <el-menu-item index="2-1">
-                        <router-link to="/loan-input/index">贷款申请</router-link>
-                    </el-menu-item>
-                </el-submenu>
-                <el-submenu index="3">
-                    <template slot="title">
-                        <span>申请管理</span>
-                    </template>
-                    <el-menu-item index="3-1">
-                        <router-link to='/application-manage/index'>申请列表</router-link>
-                    </el-menu-item>
-                </el-submenu>
-                <el-submenu index="4">
-                    <template slot="title">
-                        <span>贷款审批</span>
-                    </template>
-                    <el-menu-item index="4-1">
-                        <router-link to='/loan-approve/first'>初审</router-link>
-                    </el-menu-item>
-                    <el-menu-item index="4-2">
-                        <router-link to='/loan-approve/end'>终审</router-link>
-                    </el-menu-item>
-                </el-submenu>
-                <el-submenu index="5">
-                    <template slot="title">
-                        <span>合同管理</span>
-                    </template>
-                    <el-menu-item index="5-1">
-                        <router-link to='/contract-manage/index'>合同列表</router-link>
-                    </el-menu-item>
-                </el-submenu>
+            <el-menu router class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff"
+                active-text-color="#ffd04b" router>
+                <!-- for循环菜单组件，传入每一个菜单项-->
+                <asideMenu v-for="(menu, index) in menuList" :menu="menu" :key="index" />
             </el-menu>
-
         </el-aside>
         <el-container>
             <el-header>
@@ -58,7 +17,7 @@
                 <div class="right">
                     <!--当下拉菜单点击时触发doCommand方法-->
                     <el-dropdown @command="doCommand">
-                        <span class="el-dropdown-link"> admin </span>
+                        <span class="el-dropdown-link"> {{ userName }} </span>
                         <el-dropdown-menu slot="dropdown">
                             <!--点击时触发doCommand方法并传入logout-->
                             <el-dropdown-item command="logout">退出登录</el-dropdown-item>
@@ -79,9 +38,11 @@
 <script>
 import Breadcrumb from "@/components/Breadcrumb.vue"
 import { logout } from "@/apis/user"
+import asideMenu from "@/components/asideMenu.vue"
 export default {
     components: {
-        Breadcrumb
+        Breadcrumb,
+        asideMenu
     },
     methods: {
         async doCommand(e) {
@@ -94,6 +55,14 @@ export default {
                     localStorage.clear();
                 }
             }
+        }
+    },
+    computed: {
+        userName() {
+            return this.$store.state.userName
+        },
+        menuList() {
+            return this.$store.state.menuList
         }
     }
 }
