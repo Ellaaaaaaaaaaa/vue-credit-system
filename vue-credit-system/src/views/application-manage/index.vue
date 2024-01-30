@@ -26,7 +26,14 @@
                         <el-tag :type="row[column.property] | statusColor">{{ row[column.property] | status }}
                         </el-tag>
                     </div>
-
+                    <!--如果是操作列添加三个按钮-->
+                    <div v-else-if="column.property === 'opts'">
+                        <el-button :disabled="[0, 2, 3, 6].indexOf(row['status']) === -1" @click="showEdit(row)"
+                            type="primary">编辑</el-button>
+                        <el-button @click="delLoan(row.id)" type="danger">删除</el-button>
+                        <el-button :disabled="[0, 2, 3, 6].indexOf(row['status']) === -1" @click="submit(row.id)"
+                            type="success">提交审核</el-button>
+                    </div>
                     <div v-else>
                         {{ row[column.property] }}
                     </div>
@@ -34,12 +41,51 @@
             </el-table-column>
 
         </el-table>
+        <el-pagination @current-change="handleCurrentChange" @size-change="updateSize" :page-sizes="[10, 20, 30, 40]"
+            :page-size="pageOptions.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="rows">
+        </el-pagination>
+        <!--dialogVisible变量控制对话框是否显示-->
+        <el-dialog title="申请管理-编辑" :visible="dialogVisible" @close="dialogVisible = false" width="30%">
+            <div class="form-box">
+                <el-form ref="updateForm" :model="updateForm" :rules="rules" label-width="80px">
+                    <el-row>
+                        <el-col :xl=20 :lg=20 :md=12 :sm=24 :xs=24>
+                            <el-form-item label="姓名" prop="name">
+                                <el-input type='input' v-model="updateForm.name"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :xl=20 :lg=20 :md=12 :sm=24 :xs=24>
+                            <el-form-item label="性别" prop="sex">
+                                <el-select v-model="updateForm.sex">
+                                    <el-option key="man" label="男" value="man">
+                                    </el-option>
+                                    <el-option key="woman" label="女" value="woman">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :xl=20 :lg=20 :md=12 :sm=24 :xs=24>
+                            <el-form-item label="手机号" prop="mobile_phone">
+                                <el-input type='input' v-model="updateForm.mobile_phone" style="width:125px"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
 
+                <div class="btns clear-fix">
+                    <div>
+                        <el-button type="primary" @click="submitUpdate">提交</el-button>
+                        <el-button @click="cleanFrom">重置</el-button>
+                    </div>
+                </div>
+
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-import { getLoanList } from '@/apis/loan.js'
+import { getLoanList, updateLoan, deleteLoan, submitApprove } from '@/apis/loan.js'
 export default {
     filters: {
         statusColor(status) {
@@ -134,7 +180,19 @@ export default {
                 pageNo: 1,
                 pageSize: 10
             },
-            rows: 0
+            rows: 0,
+            updateForm: {
+                name: '',
+                sex: '',
+                id: 0,
+                mobile_phone:''
+            },
+            rules: {
+                name: [{ required: true, message: '必须填写用户名' }],
+                sex: [{ required: true, message: '必须填写性别' }],
+                mobile_phone: [{ required: true, message: '必须填写手机号' }],
+            },
+            dialogVisible: false
         }
     },
     methods: {
@@ -170,14 +228,18 @@ export default {
         getEducation(str) {
             return str === "college" ? "大学" : "高中";
         },
-
+        //模糊查询
         async setQueryName() {
-
+            this.pageOptions.name = this.query
+            await this.getLoanList()
+            this.pageOptions.name = ""
         },
+        //获取列表
         async getLoanList() {
             let res = await getLoanList(this.pageOptions)
             if (res.data.code === 20000) {
                 //对数据格式化
+                this.rows = res.data.data.rows
                 this.tableData = res.data.data.data.data.map(item => {
                     item.birthday = this.getBirthday(item.birthday);
                     item.sex = this.getSex(item.sex);
@@ -185,9 +247,54 @@ export default {
                     return item;
                 })
 
-                this.rows = res.data.data.rows
+
             }
+        },
+        showEdit(row) {
+            this.updateForm.id = row.id
+            this.updateForm.name = row.name
+            this.updateForm.sex = row.sex
+            this.updateForm.mobile_phone = row.mobile_phone
+            this.dialogVisible = true
+        },
+        //删除
+        async delLoan(id) {
+            let res = await deleteLoan(id)
+            //20000代表成功，成功后重新获取数据 
+            if (res.data.code === 20000) {
+                this.getLoanList()
+            }
+        },
+        //提交
+        async submit(id) {
+            let res = await submitApprove(id)
+            //20000代表成功，成功后重新获取数据 
+            if (res.data.code === 20000) {
+                this.getLoanList()
+            }
+        },
+        async submitUpdate() {
+            let res = await updateLoan(this.updateForm)
+            if (res.data.code === 20000) {
+                this.cleanFrom()
+                this.dialogVisible = false
+                this.getLoanList()
+            }
+        },
+        //重置
+        cleanFrom() {
+            this.$refs["updateForm"].resetFields()
+        },
+        //分页
+        handleCurrentChange(pageNo) {
+            this.pageOptions.pageNo = pageNo
+            this.getLoanList()
+        },
+        updateSize(pageSize) {
+            this.pageOptions.pageSize = pageSize
+            this.getLoanList()
         }
+
     },
     mounted() {
         this.getLoanList();
@@ -196,7 +303,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-select,
+.el-input {
+    width: 100%;
+}
+
+.btns {
+    text-align: center;
+}
+
+.box-card {
+    margin-bottom: 10px;
+
+    >div {
+        >div {
+            text-align: left;
+        }
+    }
+}
+
 .el-row {
     margin-bottom: 10px;
+}
+
+::v-deep .el-table--scrollable-x .el-table__body-wrapper {
+    overflow-x: hidden;
 }
 </style>
